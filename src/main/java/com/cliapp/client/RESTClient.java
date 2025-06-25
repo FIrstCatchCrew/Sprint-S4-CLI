@@ -124,6 +124,11 @@ public class RESTClient {
             return null;
         }
     }
+
+
+
+    // === Public catch-related methods ===
+
     public List<Catch> getAvailableCatches() {
         return getList(CATCH_ENDPOINT, new TypeReference<List<Catch>>() {});
     }
@@ -132,12 +137,18 @@ public class RESTClient {
         return getList(CATCH_ENDPOINT + "/species/" + speciesName, new TypeReference<List<Catch>>() {});
     }
 
-    public List<Order> getOrdersForCustomer(String username) {
-        return getList(ORDER_ENDPOINT + "/customer/" + username, new TypeReference<List<Order>>() {});
-    }
-
     public List<Catch> getCatchesByFisher(String username) {
         return getList(CATCH_ENDPOINT + "/fisher/" + username, new TypeReference<List<Catch>>() {});
+    }
+
+    public List<Catch> getSpeciesAvailableAtLanding(String landingName) {
+        return getList(CATCH_ENDPOINT + "/species/" + landingName, new TypeReference<List<Catch>>() {});
+    }
+
+    // === other methods ===
+
+    public List<Order> getOrdersForCustomer(String username) {
+        return getList(ORDER_ENDPOINT + "/customer/" + username, new TypeReference<List<Order>>() {});
     }
 
     public Person getCustomerByUsername(String username) {
@@ -147,4 +158,6 @@ public class RESTClient {
     public FisherProfile getFisherByUsername(String username) {
         return getObject("/api/person/fisher/" + username, FisherProfile.class);
     }
+
+
 }
