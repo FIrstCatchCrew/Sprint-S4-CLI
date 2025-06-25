@@ -11,6 +11,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
+// Check if this matches requirements for assignment
 public class CatchService {
     private final RESTClient client;
     private final ObjectMapper mapper;

@@ -13,6 +13,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+// Check if this matches requirements for assignment
 public class RESTClient {
     public List<Catch> getAvailableCatches() {
         HttpRequest request = HttpRequest.newBuilder()
