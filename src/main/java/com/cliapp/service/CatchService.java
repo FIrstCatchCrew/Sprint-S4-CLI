@@ -42,8 +42,8 @@ public class CatchService {
 
         return Collections.emptyList();
     }
-}
 
+    //@GetMapping("/available/species-by-landing")
 
 }
 
