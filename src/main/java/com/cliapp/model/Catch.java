@@ -8,6 +8,13 @@ public class Catch {
     private String pickupAddress;
     private boolean available;
 
+    public Catch(String species, double quantityInKg, double pricePerKg, String pickupAddress, boolean available) {
+        this.species = species;
+        this.quantityInKg = quantityInKg;
+        this.pricePerKg = pricePerKg;
+        this.pickupAddress = pickupAddress;
+        this.available = available;
+    }
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }

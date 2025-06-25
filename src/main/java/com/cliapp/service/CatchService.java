@@ -13,7 +13,12 @@ public class CatchService {
     }
 
     public List<Catch> getAvailableCatches() {
-        return client.getAvailableCatches();
+        try {
+            return client.getAvailableCatches();
+        } catch (Exception e) {
+            System.err.println("Failed to get catches: " + e.getMessage());
+            return List.of();
+        }
     }
 
     public List<Catch> getCatchesBySpecies(String speciesName) {
