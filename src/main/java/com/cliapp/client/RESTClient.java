@@ -38,12 +38,6 @@ public class RESTClient {
     private String serverURL;
     private HttpClient client;
 
-    private final ObjectMapper mapper;
-
-    public RESTClient() {
-        this.mapper = createDefaultMapper();
-    }
-
 
     public String getServerURL() {
         return serverURL;
@@ -56,6 +50,13 @@ public class RESTClient {
             client  = HttpClient.newHttpClient();
         }
         return client;
+    }
+
+
+    private final ObjectMapper mapper;
+
+    public RESTClient() {
+        this.mapper = createDefaultMapper();
     }
 
     private ObjectMapper createDefaultMapper() {
@@ -146,11 +147,25 @@ public class RESTClient {
         return getList(CATCH_ENDPOINT, new TypeReference<>() {});
     }
 
+    public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
+        return getList(CATCH_ENDPOINT + "/speciesName", new TypeReference<>() {});
+    }
+
     // === catches by fisher ===
     private List<CatchViewDTO> getCatchesByFisherSubpath(long id, String subPath) {
         String url = String.format(FISHER_CATCHES, id) + subPath;
         return getList(url, new TypeReference<>() {});
     } // return getCatchesByFisherSubpath(id, "/expired");
+
+
+    public List<CatchViewDTO> getFisherCatchesBySpecies(long id, String species) {
+        return getCatchesByFisherSubpath(id, "/expired");
+    } // return getCatchesByFisherSubpath(id, "/expired");
+
+    public List<CatchViewDTO> getFisherCatchesById(long id) {
+        return getCatchesByFisherSubpath(id, "");
+    }
+
 
 
     // === catches by search ===

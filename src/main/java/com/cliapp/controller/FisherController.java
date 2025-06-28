@@ -50,7 +50,7 @@ public class FisherController {
     }
 
     private void viewMyCatches(long id) {
-        List<CatchViewDTO> catchViewDTOS = catchService.getCatchesByFisherId(id);
+        List<CatchViewDTO> catchViewDTOS = catchService.getFisherCatchesById(id);
         ConsoleUI.header("Your Catches");
         if (catchViewDTOS.isEmpty()) {
             ConsoleUI.info("No catches found.");
