@@ -1,22 +1,29 @@
 package com.cliapp.controller;
 
+import com.cliapp.client.RESTClient;
+import com.cliapp.model.FisherProfile;
 import com.cliapp.model.Person;
 import com.cliapp.util.ConsoleUI;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class AdminController {
     private final Scanner scanner;
+    private final RESTClient api;
 
     public AdminController(Scanner scanner) {
         this.scanner = scanner;
+        this.api = new RESTClient();
+        this.api.setServerURL("http://localhost:8080");
     }
 
     public void run(Person admin) {
         while (true) {
             ConsoleUI.header("Admin Menu for " + admin.getUsername());
-            ConsoleUI.option("1", "View All Fishers", false);
-            ConsoleUI.option("2", "View All Buyers", false);
+            ConsoleUI.option("1", "View All Fishers", true);
+            ConsoleUI.option("2", "View All Buyers", true);
             ConsoleUI.option("3", "View All Catches", false);
             ConsoleUI.option("4", "Delete Catch", false);
             ConsoleUI.option("5", "Remove User", false);
@@ -27,6 +34,8 @@ public class AdminController {
             String choice = scanner.nextLine();
 
             switch (choice) {
+                case "1" -> viewAllFishers();
+                case "2" -> viewAllCustomers();
                 case "6" -> ConsoleUI.success("Q1 logic here...");
                 case "0" -> {
                     return;
@@ -35,4 +44,29 @@ public class AdminController {
             }
         }
     }
+
+    private void viewAllFishers() {
+        List<FisherProfile> fishers = api.getList("/api/fisher", new com.fasterxml.jackson.core.type.TypeReference<>() {});
+        ConsoleUI.header("All Registered Fishers");
+        for (FisherProfile f : fishers) {
+            System.out.printf("Fisher ID: %d | License: %s | Name: %s | Landing: %s\n",
+                    f.getId(), f.getFishingLicenseNumber(), f.getUserName(), f.getDefaultLanding());
+        }
+    }
+
+    private void viewAllCustomers() {
+        try {
+            List<Person> customers = api.getList("/api/person/roles?role=CUSTOMER", new TypeReference<>() {});
+            ConsoleUI.header("All Registered Buyers");
+            for (Person c : customers) {
+                System.out.printf("Buyer ID: %d | Name: %s\n", c.getId(), c.getUsername());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to fetch or parse customers: " + e.getMessage());
+            e.printStackTrace(); // Optional: for full trace
+        }
+    }
+
+
+
 }

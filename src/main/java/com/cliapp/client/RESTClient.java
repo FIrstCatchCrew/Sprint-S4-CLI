@@ -130,7 +130,7 @@ public class RESTClient {
     // === Public catch-related methods ===
 
     public List<Catch> getAvailableCatches() {
-        return getList(CATCH_ENDPOINT, new TypeReference<List<Catch>>() {});
+        return getList(CATCH_ENDPOINT, new TypeReference<>() {});
     }
 
     public List<Catch> getCatchesBySpecies(String speciesName) {
@@ -158,6 +158,10 @@ public class RESTClient {
     public FisherProfile getFisherByUsername(String username) {
         return getObject("/api/person/fisher/" + username, FisherProfile.class);
     }
+
+    public List<Catch> getCatchesForFisher(long fisherId) {
+        return getList("/api/fisher/" + fisherId + "/catches", new TypeReference<>() {});
+    }// this one uses the fisherID from login as an id to search for catches
 
 
 }
