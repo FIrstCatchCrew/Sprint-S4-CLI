@@ -1,6 +1,6 @@
 package com.cliapp.util;
 
-import com.cliapp.model.Catch;
+import com.cliapp.model.CatchViewDTO;
 import com.cliapp.service.CatchService;
 
 import java.util.List;
@@ -27,14 +27,14 @@ public class SharedMenuActions {
     }
 
     public void viewAvailableCatches() {
-        List<Catch> catches = catchService.getAvailableCatches();
-        catches.forEach(System.out::println);  // Eventually format nicer
+        List<CatchViewDTO> catchViewDTOS = catchService.getAvailableCatches();
+        catchViewDTOS.forEach(System.out::println);  // Eventually format nicer
     }
 
     public void viewCatchesBySpecies(Scanner scanner) {
         System.out.print("Enter species name: ");
         String species = scanner.nextLine();
-        List<Catch> catches = catchService.getCatchesBySpecies(species);
-        catches.forEach(System.out::println);
+        List<CatchViewDTO> catchViewDTOS = catchService.getCatchesBySpecies(species);
+        catchViewDTOS.forEach(System.out::println);
     }
 }

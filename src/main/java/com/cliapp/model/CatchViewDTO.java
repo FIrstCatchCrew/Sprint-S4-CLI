@@ -1,0 +1,129 @@
+package com.cliapp.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.LocalDateTime;
+
+public class CatchViewDTO {
+    private long id;
+
+    @JsonProperty("speciesName")
+    private String species;
+
+    private double quantityInKg;
+
+    @JsonProperty("price")
+    private double pricePerKg;
+
+    private boolean available;
+
+    private String fisherName;
+
+    private LocalDateTime timeStamp;
+
+    private double latitude;
+    private double longitude;
+
+    private String pickupLocationName;
+
+    @JsonProperty("pickup_instructions")
+    private String pickupInstructions;
+
+    private LocalDateTime pickupTime;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
+    }
+
+    public double getQuantityInKg() {
+        return quantityInKg;
+    }
+
+    public void setQuantityInKg(double quantityInKg) {
+        this.quantityInKg = quantityInKg;
+    }
+
+    public double getPricePerKg() {
+        return pricePerKg;
+    }
+
+    public void setPricePerKg(double pricePerKg) {
+        this.pricePerKg = pricePerKg;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public String getFisherName() {
+        return fisherName;
+    }
+
+    public void setFisherName(String fisherName) {
+        this.fisherName = fisherName;
+    }
+
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getPickupLocationName() {
+        return pickupLocationName;
+    }
+
+    public void setPickupLocationName(String pickupLocationName) {
+        this.pickupLocationName = pickupLocationName;
+    }
+
+    public String getPickupInstructions() {
+        return pickupInstructions;
+    }
+
+    public void setPickupInstructions(String pickupInstructions) {
+        this.pickupInstructions = pickupInstructions;
+    }
+
+    public LocalDateTime getPickupTime() {
+        return pickupTime;
+    }
+
+    public void setPickupTime(LocalDateTime pickupTime) {
+        this.pickupTime = pickupTime;
+    }
+}

@@ -1,6 +1,6 @@
 package com.cliapp.client;
 
-import com.cliapp.model.Catch;
+import com.cliapp.model.CatchViewDTO;
 
 import com.cliapp.model.FisherProfile;
 import com.cliapp.model.Order;
@@ -8,6 +8,7 @@ import com.cliapp.model.Person;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,10 +24,10 @@ import java.util.List;
  */
 public class RESTClient {
 
-    private static final String CATCH_ENDPOINT = "/api/catch";
-    private static final String ORDER_ENDPOINT = "/api/order";
-    private static final String PERSON_ENDPOINT = "/api/person";
-    private static final String FISHER_ENDPOINT = "/api/person/fisher";
+    private static final String CATCH_ENDPOINT = "/catch";
+    private static final String ORDER_ENDPOINT = "/order";
+    private static final String PERSON_ENDPOINT = "/person";
+    private static final String FISHER_ENDPOINT = "/fisher";
     private static final int HTTP_OK = 200;
 
     private String serverURL;
@@ -46,12 +47,12 @@ public class RESTClient {
         return client;
     }
 
-    private ObjectMapper createDefaultMapper() {
-        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    }
 
-    private URI buildUri(String endpoint) {
-        return URI.create(serverURL + endpoint);
+    private ObjectMapper createDefaultMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
 
     private final ObjectMapper mapper = createDefaultMapper();
@@ -129,20 +130,20 @@ public class RESTClient {
 
     // === Public catch-related methods ===
 
-    public List<Catch> getAvailableCatches() {
+    public List<CatchViewDTO> getAvailableCatches() {
         return getList(CATCH_ENDPOINT, new TypeReference<>() {});
     }
 
-    public List<Catch> getCatchesBySpecies(String speciesName) {
-        return getList(CATCH_ENDPOINT + "/species/" + speciesName, new TypeReference<List<Catch>>() {});
+    public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
+        return getList(CATCH_ENDPOINT + "/species/" + speciesName, new TypeReference<>() {});
     }
 
-    public List<Catch> getCatchesByFisher(String username) {
-        return getList(CATCH_ENDPOINT + "/fisher/" + username, new TypeReference<List<Catch>>() {});
+    public List<CatchViewDTO> getCatchesByFisherId(long id) {
+        return getList(FISHER_ENDPOINT + id + "/catches", new TypeReference<>() {});
     }
 
-    public List<Catch> getSpeciesAvailableAtLanding(String landingName) {
-        return getList(CATCH_ENDPOINT + "/species/" + landingName, new TypeReference<List<Catch>>() {});
+    public List<CatchViewDTO> getSpeciesAvailableAtLanding(String landingName) {
+        return getList(CATCH_ENDPOINT + "/species/" + landingName, new TypeReference<List<CatchViewDTO>>() {});
     }
 
     // === other methods ===
@@ -156,12 +157,20 @@ public class RESTClient {
     }
 
     public FisherProfile getFisherByUsername(String username) {
-        return getObject("/api/person/fisher/" + username, FisherProfile.class);
+        return getObject(FISHER_ENDPOINT + username, FisherProfile.class);
     }
 
-    public List<Catch> getCatchesForFisher(long fisherId) {
-        return getList("/api/fisher/" + fisherId + "/catches", new TypeReference<>() {});
-    }// this one uses the fisherID from login as an id to search for catches
+    public List<FisherProfile> getAllFishers() {
+        return getList(FISHER_ENDPOINT, new TypeReference<List<FisherProfile>>() {});
+    }
+
+    public List<Person> getAllByRoleType(String role) {
+        return getList(PERSON_ENDPOINT + "/roles/" + role, new TypeReference<>() {});
+    }
+
+//    public List<Catch> getCatchesForFisher(long fisherId) {
+//        return getList(FISHER_ENDPOINT + "/" + fisherId + "/catches", new TypeReference<>() {});
+//    }// this one uses the fisherID from login as an id to search for catches
 
 
 }

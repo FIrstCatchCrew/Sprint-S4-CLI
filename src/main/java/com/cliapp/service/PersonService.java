@@ -1,6 +1,7 @@
 package com.cliapp.service;
 
 import com.cliapp.client.RESTClient;
+import com.cliapp.model.FisherProfile;
 import com.cliapp.model.Person;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,14 +14,14 @@ import java.util.Map;
 
 public class PersonService {
 
-    private final RESTClient restClient;
-    public PersonService() {
-        this.restClient = new RESTClient();
-        this.restClient.setServerURL("http://localhost:8080"); // ⬅️ Or wherever your backend is running
+    private final RESTClient client;
+
+    public PersonService(RESTClient client) {
+        this.client = client;
     }
 
     public Person authenticate(String email, String password) {
-        String endpoint = "/api/person/login";
+        String endpoint = "/person/login";
 
         try {
             // Create JSON body
@@ -30,12 +31,12 @@ public class PersonService {
             ));
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(restClient.getServerURL() + endpoint))
+                    .uri(URI.create(client.getServerURL() + endpoint))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .build();
 
-            HttpResponse<String> response = restClient.getClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.getClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 return new ObjectMapper()
@@ -50,4 +51,21 @@ public class PersonService {
         return null;
     }
 
+    public List<FisherProfile> getAllFishers() {
+        try {
+            return client.getAllFishers();
+        } catch (Exception e) {
+            System.err.println("Failed to get fishers: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    public List<Person> getAllByRoleType(String role) {
+        try {
+            return client.getAllByRoleType(role);
+        } catch (Exception e) {
+            System.err.println("Failed to get fishers: " + e.getMessage());
+            return List.of();
+        }
+    }
 }

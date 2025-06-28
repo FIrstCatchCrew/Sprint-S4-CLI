@@ -1,7 +1,7 @@
 package com.cliapp.service;
 
 import com.cliapp.client.RESTClient;
-import com.cliapp.model.Catch;
+import com.cliapp.model.CatchViewDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,15 +17,15 @@ class CatchServiceTest {
         RESTClient mockClient = mock(RESTClient.class);
         CatchService catchService = new CatchService(mockClient);
 
-        Catch mockCatch = new Catch("cod", 2, 5, "here", true);  // populate fields if needed
-        when(mockClient.getAvailableCatches()).thenReturn(List.of(mockCatch));
+        CatchViewDTO mockCatchViewDTO = new CatchViewDTO("cod", 2, 5, "here", true);  // populate fields if needed
+        when(mockClient.getAvailableCatches()).thenReturn(List.of(mockCatchViewDTO));
 
         // Act
-        List<Catch> result = catchService.getAvailableCatches();
+        List<CatchViewDTO> result = catchService.getAvailableCatches();
 
         // Assert
         assertEquals(1, result.size());
-        assertSame(mockCatch, result.getFirst());
+        assertSame(mockCatchViewDTO, result.getFirst());
         verify(mockClient).getAvailableCatches();
     }
 
@@ -38,7 +38,7 @@ class CatchServiceTest {
         when(mockClient.getAvailableCatches()).thenThrow(new RuntimeException("Server error"));
 
         // Act
-        List<Catch> result = catchService.getAvailableCatches();
+        List<CatchViewDTO> result = catchService.getAvailableCatches();
 
         // Assert
         assertTrue(result.isEmpty(), "Expected empty list when client throws");
