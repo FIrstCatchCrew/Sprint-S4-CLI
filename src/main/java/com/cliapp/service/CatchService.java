@@ -1,7 +1,7 @@
 package com.cliapp.service;
 
 import com.cliapp.client.RESTClient;
-import com.cliapp.model.Catch;
+import com.cliapp.model.CatchViewDTO;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class CatchService {
         this.client = client;
     }
 
-    public List<Catch> getAvailableCatches() {
+    public List<CatchViewDTO> getAvailableCatches() {
         try {
             return client.getAvailableCatches();
         } catch (Exception e) {
@@ -21,15 +21,19 @@ public class CatchService {
         }
     }
 
-    public List<Catch> getCatchesBySpecies(String speciesName) {
+    public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
         return client.getCatchesBySpecies(speciesName);
     }
 
-    public List<Catch> getCatchesByFisher(String username) {
-        return client.getCatchesByFisher(username);
+//    public List<Catch> getCatchesByFisherName(String username) {
+//        return client.getCatchesByFisherName(username);
+//    }
+
+    public List<CatchViewDTO> getCatchesByFisherId(long id) {
+        return client.getCatchesByFisherId(id);
     }
 
-    public List<Catch> getSpeciesAvailableAtLanding(String landingName) {
+    public List<CatchViewDTO> getSpeciesAvailableAtLanding(String landingName) {
         return client.getSpeciesAvailableAtLanding(landingName);
     }
 }

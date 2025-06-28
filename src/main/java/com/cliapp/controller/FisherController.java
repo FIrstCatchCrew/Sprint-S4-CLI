@@ -1,8 +1,9 @@
 package com.cliapp.controller;
 
-import com.cliapp.client.RESTClient;
-import com.cliapp.model.Catch;
+import com.cliapp.model.CatchViewDTO;
 import com.cliapp.model.Person;
+import com.cliapp.service.CatchService;
+import com.cliapp.service.PersonService;
 import com.cliapp.util.ConsoleUI;
 
 import java.util.List;
@@ -10,17 +11,23 @@ import java.util.Scanner;
 
 public class FisherController {
     private final Scanner scanner;
-    private final RESTClient api;
+    private final CatchService catchService;
+    private final PersonService personService;
 
-    public FisherController(Scanner scanner) {
+    public FisherController(Scanner scanner, CatchService catchService, PersonService personService) {
         this.scanner = scanner;
-        this.api = new RESTClient();
-        this.api.setServerURL("http://localhost:8080");
+        this.catchService = catchService;
+        this.personService = personService;
     }
+
+
 
     public void run(Person fisher) {
         while (true) {
             ConsoleUI.header("Fisher Menu for " + fisher.getUsername());
+            System.out.print(fisher.getId()+ fisher.getUsername()+ fisher.getEmail()+ fisher.getRole());
+
+
             ConsoleUI.option("1", "Add New Catch", false);
             ConsoleUI.option("2", "View My Catches", true);
             ConsoleUI.option("3", "Update Catch Info", false);
@@ -42,15 +49,15 @@ public class FisherController {
         }
     }
 
-    private void viewMyCatches(long fisherId) {
-        List<Catch> catches = api.getCatchesForFisher(fisherId);
+    private void viewMyCatches(long id) {
+        List<CatchViewDTO> catchViewDTOS = catchService.getCatchesByFisherId(id);
         ConsoleUI.header("Your Catches");
-        if (catches.isEmpty()) {
+        if (catchViewDTOS.isEmpty()) {
             ConsoleUI.info("No catches found.");
             return;
         }
 
-        for (Catch c : catches) {
+        for (CatchViewDTO c : catchViewDTOS) {
             System.out.printf("ID: %d | Species: %s | Qty: %.2fkg | Price: $%.2f | Available: %s\n",
                     c.getId(),
                     c.getSpecies(),

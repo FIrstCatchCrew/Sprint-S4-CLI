@@ -1,16 +1,23 @@
 package com.cliapp.controller;
 
 import com.cliapp.model.Person;
+import com.cliapp.service.CatchService;
+import com.cliapp.service.PersonService;
 import com.cliapp.util.ConsoleUI;
 
 import java.util.Scanner;
 
 public class CustomerController {
     private final Scanner scanner;
+    private final CatchService catchService;
+    private final PersonService personService;
 
-    public CustomerController(Scanner scanner) {
+    public CustomerController(Scanner scanner, CatchService catchService, PersonService personService) {
         this.scanner = scanner;
+        this.catchService = catchService;
+        this.personService = personService;
     }
+
 
     public void run(Person customer) {
         while (true) {
