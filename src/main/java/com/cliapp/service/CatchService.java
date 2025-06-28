@@ -29,8 +29,8 @@ public class CatchService {
 //        return client.getCatchesByFisherName(username);
 //    }
 
-    public List<CatchViewDTO> getCatchesByFisherId(long id) {
-        return client.getCatchesByFisherId(id);
+    public List<CatchViewDTO> getFisherCatchesById(long id) {
+        return client.getFisherCatchesById(id);
     }
 
     public List<CatchViewDTO> getSpeciesAvailableAtLanding(String landingName) {
