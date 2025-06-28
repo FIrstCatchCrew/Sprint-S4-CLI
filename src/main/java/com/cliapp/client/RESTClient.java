@@ -11,10 +11,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +31,18 @@ public class RESTClient {
     private static final String ORDER_ENDPOINT = "/order";
     private static final String PERSON_ENDPOINT = "/person";
     private static final String FISHER_ENDPOINT = "/fisher";
+    private static final String FISHER_CATCHES = "/fisher/%d/catches";
+
     private static final int HTTP_OK = 200;
 
     private String serverURL;
     private HttpClient client;
+
+    private final ObjectMapper mapper;
+
+    public RESTClient() {
+        this.mapper = createDefaultMapper();
+    }
 
 
     public String getServerURL() {
@@ -47,15 +58,12 @@ public class RESTClient {
         return client;
     }
 
-
     private ObjectMapper createDefaultMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         mapper.registerModule(new JavaTimeModule());
         return mapper;
     }
-
-    private final ObjectMapper mapper = createDefaultMapper();
 
     /**
      * Sends an HTTP request using the given {@code HttpRequest} and returns the response.
@@ -96,7 +104,7 @@ public class RESTClient {
             HttpResponse<String> response = httpSender(request);
             return mapper.readValue(response.body(), typeRef);
         } catch (IOException | InterruptedException e) {
-            System.err.println("Failed to fetch from " + endpoint + ": " + e.getMessage());
+            System.err.println("Failed to fetch from " + serverURL + endpoint + ": " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -121,7 +129,7 @@ public class RESTClient {
             HttpResponse<String> response = httpSender(request);
             return mapper.readValue(response.body(), clazz);
         } catch (IOException | InterruptedException e) {
-            System.err.println("Failed to fetch from " + endpoint + ": " + e.getMessage());
+            System.err.println("Failed to fetch from " + serverURL + endpoint + ": " + e.getMessage());
             return null;
         }
     }
@@ -130,47 +138,98 @@ public class RESTClient {
 
     // === Public catch-related methods ===
 
-    public List<CatchViewDTO> getAvailableCatches() {
+    public CatchViewDTO getCatchById(long id) {
+        return getObject(CATCH_ENDPOINT+ "/" + id, CatchViewDTO.class);
+    }
+
+    public List<CatchViewDTO> getAllCatches() {
         return getList(CATCH_ENDPOINT, new TypeReference<>() {});
     }
 
-    public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
-        return getList(CATCH_ENDPOINT + "/species/" + speciesName, new TypeReference<>() {});
+    // === catches by fisher ===
+    private List<CatchViewDTO> getCatchesByFisherSubpath(long id, String subPath) {
+        String url = String.format(FISHER_CATCHES, id) + subPath;
+        return getList(url, new TypeReference<>() {});
+    } // return getCatchesByFisherSubpath(id, "/expired");
+
+
+    // === catches by search ===
+    public List<CatchViewDTO> getAvailableCatches() {
+        return getList(CATCH_ENDPOINT + "/species", new TypeReference<>() {});
     }
 
-    public List<CatchViewDTO> getCatchesByFisherId(long id) {
-        return getList(FISHER_ENDPOINT + id + "/catches", new TypeReference<>() {});
-    }
 
     public List<CatchViewDTO> getSpeciesAvailableAtLanding(String landingName) {
-        return getList(CATCH_ENDPOINT + "/species/" + landingName, new TypeReference<List<CatchViewDTO>>() {});
+        String encodedName = URLEncoder.encode(landingName, StandardCharsets.UTF_8);
+        return getList(CATCH_ENDPOINT + "/species/" + encodedName, new TypeReference<List<CatchViewDTO>>() {});
     }
 
-    // === other methods ===
+    //TODO: this method could be cleaned up
+    public List<CatchViewDTO> searchCatches(String speciesName, String pickupAddress, BigDecimal minPrice, BigDecimal maxPrice) {
+        StringBuilder query = new StringBuilder(CATCH_ENDPOINT + "/search?");
 
-    public List<Order> getOrdersForCustomer(String username) {
-        return getList(ORDER_ENDPOINT + "/customer/" + username, new TypeReference<List<Order>>() {});
+        if (speciesName != null) {
+            String encodedSpeciesName = URLEncoder.encode(speciesName, StandardCharsets.UTF_8);
+            query.append("species_name=").append(encodedSpeciesName).append("&");
+        }
+        if (pickupAddress != null) {
+            String encodedAddress = URLEncoder.encode(pickupAddress, StandardCharsets.UTF_8);
+            query.append("pickup_address=").append(encodedAddress).append("&");
+        }
+        if (minPrice != null) {
+            query.append("min_price=").append(minPrice).append("&");
+        }
+        if (maxPrice != null) {
+            query.append("max_price=").append(maxPrice).append("&");
+        }
+
+        if (query.charAt(query.length() - 1) == '&') {
+            query.setLength(query.length() - 1);
+        }
+
+        return getList(query.toString(), new TypeReference<>() {});
     }
 
-    public Person getCustomerByUsername(String username) {
-        return getObject("/api/person/" + username, Person.class);
+
+    // === Public fisher-related methods ===
+    public FisherProfile getFisherById(long id) {
+        return getObject(PERSON_ENDPOINT + "/" + id, FisherProfile.class);
     }
 
     public FisherProfile getFisherByUsername(String username) {
-        return getObject(FISHER_ENDPOINT + username, FisherProfile.class);
+        String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
+        return getObject(FISHER_ENDPOINT+ "/" + encodedUsername, FisherProfile.class);
     }
 
     public List<FisherProfile> getAllFishers() {
-        return getList(FISHER_ENDPOINT, new TypeReference<List<FisherProfile>>() {});
+        return getList(FISHER_ENDPOINT, new TypeReference<>() {});
+    }
+
+    // === order-related methods ===
+
+    public Order getOrderById(long id) {
+        return getObject(ORDER_ENDPOINT + "/" + id, Order.class);
+    }
+
+    public List<Order> getOrdersByCustomer(String username) {
+        String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
+        return getList(ORDER_ENDPOINT + "/customer/" + encodedUsername, new TypeReference<>() {});
+    }
+
+
+    // === person-related methods ===
+
+    public Person getUserById(long id) {
+        return getObject(PERSON_ENDPOINT + "/" + id, Person.class);
+    }
+
+    public Person getUserByUsername(String username) {
+        return getObject(PERSON_ENDPOINT + "/" + username, Person.class);
     }
 
     public List<Person> getAllByRoleType(String role) {
-        return getList(PERSON_ENDPOINT + "/roles/" + role, new TypeReference<>() {});
+        String encodedRole = URLEncoder.encode(role, StandardCharsets.UTF_8);
+        return getList(PERSON_ENDPOINT + "/roles?role=" + encodedRole, new TypeReference<>() {});
     }
-
-//    public List<Catch> getCatchesForFisher(long fisherId) {
-//        return getList(FISHER_ENDPOINT + "/" + fisherId + "/catches", new TypeReference<>() {});
-//    }// this one uses the fisherID from login as an id to search for catches
-
 
 }
