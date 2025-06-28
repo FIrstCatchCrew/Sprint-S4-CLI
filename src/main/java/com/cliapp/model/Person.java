@@ -13,6 +13,10 @@ public class Person {
         this.role = role;
     }
 
+    public Person() {
+
+    }
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getEmail() { return email; }
