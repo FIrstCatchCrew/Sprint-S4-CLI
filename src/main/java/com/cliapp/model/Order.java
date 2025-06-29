@@ -6,17 +6,17 @@ import java.util.List;
 
 public class Order {
 
-    private Long orderId;
+    private long id;
     private String customerUsername;
     private LocalDateTime orderDateTime;
     private String orderStatus;
     private List<OrderItem> orderItems;
 
-    public Long getOrderId() {
-        return orderId;
+    public Long getId() {
+        return id;
     }
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCustomerUsername() {

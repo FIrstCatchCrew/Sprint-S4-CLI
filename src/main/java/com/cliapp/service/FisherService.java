@@ -63,7 +63,7 @@ public class FisherService {
         try {
             return getSoldCatchesByFisherId(fisherId).stream()
                     .collect(Collectors.groupingBy(c -> {
-                        String port = c.getPickupLocationName();
+                        String port = c.getLandingName();
                         return port != null && !port.isBlank() ? port : "Unknown Port";
                     }));
         } catch (Exception e) {
