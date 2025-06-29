@@ -1,21 +1,28 @@
 package com.cliapp.controller;
 
+import com.cliapp.model.CatchViewDTO;
+import com.cliapp.model.Order;
+import com.cliapp.model.OrderItem;
 import com.cliapp.model.Person;
 import com.cliapp.service.CatchService;
+import com.cliapp.service.OrderService;
 import com.cliapp.service.PersonService;
 import com.cliapp.util.ConsoleUI;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class CustomerController {
     private final Scanner scanner;
     private final CatchService catchService;
     private final PersonService personService;
+    private final OrderService orderService;
 
-    public CustomerController(Scanner scanner, CatchService catchService, PersonService personService) {
+    public CustomerController(Scanner scanner, CatchService catchService, PersonService personService, OrderService orderService) {
         this.scanner = scanner;
         this.catchService = catchService;
         this.personService = personService;
+        this.orderService = orderService;
     }
 
 
@@ -43,4 +50,64 @@ public class CustomerController {
             }
         }
     }
+
+    private void searchBySpecies() {
+        System.out.print("Enter species name: ");
+        String species = scanner.nextLine();
+
+        List<CatchViewDTO> catches = catchService.getCatchesBySpecies(species);
+
+        if (catches.isEmpty()) {
+            ConsoleUI.info("No catches found for that species.");
+            return;
+        }
+
+        ConsoleUI.header("Available Catches for Species: " + species);
+        for (CatchViewDTO c : catches) {
+            printCatch(c);
+        }
+    }
+
+    private void searchByFisher() {
+        System.out.print("Enter fisher's username: ");
+        String fisher = scanner.nextLine();
+
+        List<CatchViewDTO> catches = catchService.getCatchesByFisherName(fisher);
+
+        if (catches.isEmpty()) {
+            ConsoleUI.info("No catches found for that fisher.");
+            return;
+        }
+
+        ConsoleUI.header("Available Catches by Fisher: " + fisher);
+        for (CatchViewDTO c : catches) {
+            printCatch(c);
+        }
+    }
+
+    private void viewMyPurchases(Person customer) {
+        List<Order> orders = orderService.getOrdersForCustomer(customer.getUsername());
+
+        if (orders.isEmpty()) {
+            ConsoleUI.info("You have no purchases.");
+            return;
+        }
+
+        ConsoleUI.header("Your Purchases:");
+        for (Order o : orders) {
+            System.out.printf("Order #%d | Date: %s | Status: %s\n",
+                    o.getOrderId(), o.getOrderDateTime(), o.getOrderStatus());
+
+            for (OrderItem item : o.getOrderItems()) {
+                System.out.printf("  - Catch ID: %d | Quantity: %d\n",
+                        item.getCatchId(), item.getQuantity());
+            }
+        }
+    }
+    private void printCatch(CatchViewDTO c) {
+        System.out.printf("Catch ID: %d | Species: %s | %.2f kg | $%.2f/kg | Fisher: %s\n",
+                c.getId(), c.getSpecies(), c.getQuantityInKg(), c.getPricePerKg(), c.getFisherName());
+    }
+
+
 }

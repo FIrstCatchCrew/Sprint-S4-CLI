@@ -5,8 +5,7 @@ import com.cliapp.controller.AdminController;
 import com.cliapp.controller.CustomerController;
 import com.cliapp.controller.FisherController;
 import com.cliapp.model.Person;
-import com.cliapp.service.CatchService;
-import com.cliapp.service.PersonService;
+import com.cliapp.service.*;
 import com.cliapp.util.ConsoleUI;
 
 import java.util.Scanner;
@@ -22,12 +21,15 @@ public class Main {
         // Init services
         CatchService catchService = new CatchService(restClient);
         PersonService personService = new PersonService(restClient);
+        FisherService fisherService = new FisherService(restClient);
+        OrderService orderService = new OrderService(restClient);
+        AuthService authService = new AuthService(restClient);
 
-        new Main().start(catchService, personService);
+        new Main().start(catchService, personService, orderService, fisherService, authService);
 
     }
 
-    public void start(CatchService catchService, PersonService personService) {
+    public void start(CatchService catchService, PersonService personService, OrderService orderService, FisherService fisherService, AuthService authService) {
         ConsoleUI.header("=== FIRST CATCH CLI ===");
 
         int choice;
@@ -45,7 +47,7 @@ public class Main {
             scanner.nextLine(); // clear newline
 
             switch (choice) {
-                case 1 -> handleLogin(catchService, personService);
+                case 1 -> handleLogin(catchService, personService, authService, fisherService, orderService);
                 case 2 -> System.out.println("Goodbye!");
                 default -> ConsoleUI.error("Invalid option.");
             }
@@ -53,8 +55,8 @@ public class Main {
     }
 
 
-    private void handleLogin(CatchService catchService, PersonService personService) {
-        Person user = loginUser(personService);
+    private void handleLogin(CatchService catchService, PersonService personService, AuthService authService, FisherService fisherService, OrderService orderService) {
+        Person user = loginUser(authService);
         if (user == null) {
             ConsoleUI.error("Login failed.");
             return;
@@ -62,18 +64,18 @@ public class Main {
 
         switch (user.getRole()) {
             case "ADMIN" -> new AdminController(scanner, catchService, personService).run(user);
-            case "FISHER" -> new FisherController(scanner, catchService, personService).run(user);
-            case "CUSTOMER" -> new CustomerController(scanner, catchService, personService).run(user);
+            case "FISHER" -> new FisherController(scanner, catchService, fisherService).run(user);
+            case "CUSTOMER" -> new CustomerController(scanner, catchService, personService, orderService).run(user);
             default -> ConsoleUI.error("Unknown role.");
         }
     }
 
-    private Person loginUser(PersonService personService) {
+    private Person loginUser(AuthService authService) {
         System.out.print("Email: ");
         String email = scanner.nextLine();
         System.out.print("Password: ");
         String password = scanner.nextLine();
 
-        return personService.authenticate(email, password);
+        return authService.authenticate(email, password);
     }
 }

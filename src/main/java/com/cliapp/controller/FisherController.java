@@ -3,21 +3,25 @@ package com.cliapp.controller;
 import com.cliapp.model.CatchViewDTO;
 import com.cliapp.model.Person;
 import com.cliapp.service.CatchService;
-import com.cliapp.service.PersonService;
+import com.cliapp.service.FisherService;
 import com.cliapp.util.ConsoleUI;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
 public class FisherController {
     private final Scanner scanner;
     private final CatchService catchService;
-    private final PersonService personService;
+    private final FisherService fisherService;
 
-    public FisherController(Scanner scanner, CatchService catchService, PersonService personService) {
+
+    public FisherController(Scanner scanner, CatchService catchService, FisherService fisherService) {
         this.scanner = scanner;
         this.catchService = catchService;
-        this.personService = personService;
+        this.fisherService = fisherService;
     }
 
 
@@ -40,7 +44,7 @@ public class FisherController {
 
             switch (choice) {
                 case "2" -> viewMyCatches(fisher.getId());
-                case "5" -> ConsoleUI.success("Q4: Total sales value today...");
+                case "5" -> displaySalesToday(fisher);
                 case "0" -> {
                     return;
                 }
@@ -50,7 +54,7 @@ public class FisherController {
     }
 
     private void viewMyCatches(long id) {
-        List<CatchViewDTO> catchViewDTOS = catchService.getFisherCatchesById(id);
+        List<CatchViewDTO> catchViewDTOS = catchService.getCatchesByFisherId(id);
         ConsoleUI.header("Your Catches");
         if (catchViewDTOS.isEmpty()) {
             ConsoleUI.info("No catches found.");
@@ -65,6 +69,47 @@ public class FisherController {
                     c.getPricePerKg(),
                     c.isAvailable() ? "Yes" : "No"
             );
+        }
+    }
+
+    private void displaySalesToday(Person fisher) {
+        List<CatchViewDTO> soldCatches = fisherService.getSoldCatchesByFisherId(fisher.getId());
+
+        if (soldCatches.isEmpty()) {
+            ConsoleUI.info("You have no sales today.");
+            return;
+        }
+
+        LocalDate today = LocalDate.now();
+        BigDecimal total = BigDecimal.ZERO;
+        int count = 0;
+
+        System.out.println("\n=== Sales for Today (" + today + ") ===");
+
+        for (CatchViewDTO c : soldCatches) {
+            if (c.getTimeStamp().toLocalDate().isEqual(today)) {
+                count++;
+
+                BigDecimal price = BigDecimal.valueOf(c.getPricePerKg());
+                BigDecimal quantity = BigDecimal.valueOf(c.getQuantityInKg());
+                BigDecimal lineTotal = price.multiply(quantity);
+
+                total = total.add(lineTotal);
+
+                System.out.printf("Sold: %s | %.2f kg | $%.2f/kg | Line: $%.2f\n",
+                        c.getSpecies(),
+                        c.getQuantityInKg(),
+                        c.getPricePerKg(),
+                        lineTotal
+                );
+            }
+        }
+
+        if (count == 0) {
+            ConsoleUI.info("You have no sales for today.");
+        } else {
+            BigDecimal avg = total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+            System.out.printf("\nSummary: %d sales | Total: $%.2f | Avg per sale: $%.2f\n", count, total, avg);
         }
     }
 
