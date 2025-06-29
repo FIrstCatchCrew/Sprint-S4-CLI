@@ -145,38 +145,33 @@ public class RESTClient {
     public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
         return getList(CATCH_ENDPOINT + "/speciesName", new TypeReference<>() {});
     }
-
-    // === catches by fisher ===
     public List<CatchViewDTO> getCatchesByFisherId(long id) {
         String url = String.format(FISHER_CATCHES, id);
         return getList(url, new TypeReference<>() {});
-    } // return getCatchesByFisherSubpath(id, "/expired");
+    }
+
+    public List<CatchViewDTO> getCatchesByFisherName(String username) {
+        return getList(CATCH_ENDPOINT + "/fisher/" + username, new TypeReference<>() {});
+    }
+
+
+    // === catches by fisher ===
 
     private List<CatchViewDTO> getCatchesByFisherSubpath(long id, String subPath) {
         String url = String.format(FISHER_CATCHES, id) + subPath;
         return getList(url, new TypeReference<>() {});}
-    // return getCatchesByFisherSubpath(id, "/expired");
-
-
-
-    public List<CatchViewDTO> getFisherCatchesBySpecies(long id, String species) {
-        return getCatchesByFisherSubpath(id, "/expired");
-    } // return getCatchesByFisherSubpath(id, "/expired");
 
     public List<CatchViewDTO> getFisherCatchesById(long id) {
         return getCatchesByFisherSubpath(id, "");
     }
 
+    public List<CatchViewDTO> getExpiredCatchesByFisherId(long id) {
+        return getCatchesByFisherSubpath(id, "/expired");
+    }
+
     public List<CatchViewDTO> getSoldCatchesByFisherId(long id) {
         return getCatchesByFisherSubpath(id, "/sold");
     }
-
-    public List<CatchViewDTO> getCatchesByFisher(String username) {
-        return getList(CATCH_ENDPOINT + "/fisher/" + username, new TypeReference<>() {});
-    }
-
-
-
 
     // === catches by search ===
     public List<CatchViewDTO> getAvailableCatches() {
@@ -257,4 +252,7 @@ public class RESTClient {
         return getList(PERSON_ENDPOINT + "/roles?role=" + encodedRole, new TypeReference<>() {});
     }
 
+    public List<Order> getAllOrders() {
+        return getList(ORDER_ENDPOINT, new TypeReference<>() {});
+    }
 }

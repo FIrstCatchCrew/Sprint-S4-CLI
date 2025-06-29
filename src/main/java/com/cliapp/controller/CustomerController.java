@@ -16,6 +16,7 @@ public class CustomerController {
     private final Scanner scanner;
     private final CatchService catchService;
     private final PersonService personService;
+    private final OrderService orderService;
 
     public CustomerController(Scanner scanner, CatchService catchService, PersonService personService, OrderService orderService) {
         this.scanner = scanner;
@@ -71,7 +72,7 @@ public class CustomerController {
         System.out.print("Enter fisher's username: ");
         String fisher = scanner.nextLine();
 
-        List<CatchViewDTO> catches = catchService.getCatchesByFisher(fisher);
+        List<CatchViewDTO> catches = catchService.getCatchesByFisherName(fisher);
 
         if (catches.isEmpty()) {
             ConsoleUI.info("No catches found for that fisher.");

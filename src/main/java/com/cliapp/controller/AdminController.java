@@ -5,6 +5,8 @@ import com.cliapp.model.CatchViewDTO;
 import com.cliapp.model.FisherProfile;
 import com.cliapp.model.Person;
 import com.cliapp.service.CatchService;
+import com.cliapp.service.FisherService;
+import com.cliapp.service.OrderService;
 import com.cliapp.service.PersonService;
 import com.cliapp.util.ConsoleUI;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,12 +20,23 @@ public class AdminController {
     private final Scanner scanner;
     private final CatchService catchService;
     private final PersonService personService;
+    //private final OrderService orderService;
+    //private final FisherService fisherService;
+
 
     public AdminController(Scanner scanner, CatchService catchService, PersonService personService) {
         this.scanner = scanner;
         this.catchService = catchService;
         this.personService = personService;
     }
+//
+//    public AdminController(Scanner scanner, CatchService catchService, PersonService personService, FisherService fisherService, OrderService orderService) {
+//        this.scanner = scanner;
+//        this.catchService = catchService;
+//        this.personService = personService;
+//        this.fisherService = fisherService;
+//        this.orderService = orderService;
+//    }
 
     public void run(Person admin) {
         while (true) {
@@ -42,7 +55,7 @@ public class AdminController {
             switch (choice) {
                 case "1" -> viewAllFishers();
                 case "2" -> viewAllCustomers();
-                case "6" -> getCatchCountByLanding();
+                case "6" -> getCatchCountByLanding(scanner);
                 case "0" -> {
                     return;
                 }
@@ -74,35 +87,23 @@ public class AdminController {
     }
 
 
-    private void getCatchCountByLanding() {
-        try {
-            List<CatchViewDTO> allCatches = catchService.getAllCatches(); // Not filtered yet
-            if (allCatches.isEmpty()) {
-                ConsoleUI.info("No catches found.");
-                return;
-            }
+    private void getCatchCountByLanding(Scanner scanner) {
 
-            // Group by pickup address and count
-            Map<String, Long> countByLanding = allCatches.stream()
-                    .filter(c -> c.getPickupLocationName() != null)
-                    .collect(Collectors.groupingBy(
-                            CatchViewDTO::getPickupLocationName,
-                            Collectors.counting()
-                    ));
-
-            ConsoleUI.header("Catch Counts by Landing (Port)");
-
-            // Optional: sort descending
-            countByLanding.entrySet().stream()
-                    .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                    .forEach(entry -> System.out.printf("Port: %-20s | Catches: %d\n", entry.getKey(), entry.getValue()));
-
-        } catch (Exception e) {
-            System.err.println("Failed to fetch or process catches: " + e.getMessage());
-            e.printStackTrace();
+        System.out.print("Enter port name: ");
+        String landing = scanner.nextLine();
+        if (landing.isBlank()) {
+            ConsoleUI.error("Port name cannot be blank.");
+            return;
         }
-    }
+        Map<String, Long> countByLanding = catchService.getCatchCountByLanding(landing);
 
+        ConsoleUI.header("Catch Counts by Landing (Port)");
+        countByLanding.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .forEach(entry ->
+                        System.out.printf("Port: %-20s | Catches: %d\n", entry.getKey(), entry.getValue())
+                );
+    }
 
 
 }

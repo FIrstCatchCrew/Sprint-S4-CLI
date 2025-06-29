@@ -1,9 +1,7 @@
 package com.cliapp.service;
 
 import com.cliapp.client.RESTClient;
-import com.cliapp.model.CatchViewDTO;
 import com.cliapp.model.Order;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
 
@@ -15,11 +13,25 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders() {
-        return client.getList("/order", new TypeReference<>() {});
+        try {
+            return client.getAllOrders();
+        } catch (Exception e) {
+            return handleCatchError(e);
+        }
     }
 
     public List<Order> getOrdersForCustomer(String customer) {
-        return client.getOrdersByCustomer(customer);
+        try {
+            return client.getOrdersByCustomer(customer);
+        } catch (Exception e) {
+            return handleCatchError(e);
+        }
+    }
+
+    private List<Order> handleCatchError(Exception e) {
+        System.err.println("Failed to get orders: " + e.getMessage());
+        System.out.println("No orders available at the moment. Please try again later.");
+        return List.of();
     }
 
 }

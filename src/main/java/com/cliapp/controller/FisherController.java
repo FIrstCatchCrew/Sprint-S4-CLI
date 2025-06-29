@@ -3,25 +3,25 @@ package com.cliapp.controller;
 import com.cliapp.model.CatchViewDTO;
 import com.cliapp.model.Person;
 import com.cliapp.service.CatchService;
-import com.cliapp.service.PersonService;
+import com.cliapp.service.FisherService;
 import com.cliapp.util.ConsoleUI;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
 public class FisherController {
     private final Scanner scanner;
     private final CatchService catchService;
-    private final PersonService personService;
+    private final FisherService fisherService;
 
-    public FisherController(Scanner scanner, CatchService catchService, PersonService personService) {
+
+    public FisherController(Scanner scanner, CatchService catchService, FisherService fisherService) {
         this.scanner = scanner;
         this.catchService = catchService;
-        this.personService = personService;
+        this.fisherService = fisherService;
     }
 
 
@@ -54,7 +54,7 @@ public class FisherController {
     }
 
     private void viewMyCatches(long id) {
-        List<CatchViewDTO> catchViewDTOS = catchService.getFisherCatchesById(id);
+        List<CatchViewDTO> catchViewDTOS = catchService.getCatchesByFisherId(id);
         ConsoleUI.header("Your Catches");
         if (catchViewDTOS.isEmpty()) {
             ConsoleUI.info("No catches found.");
@@ -73,7 +73,7 @@ public class FisherController {
     }
 
     private void displaySalesToday(Person fisher) {
-        List<CatchViewDTO> soldCatches = catchService.getSoldCatchesByFisherId(fisher.getId());
+        List<CatchViewDTO> soldCatches = fisherService.getSoldCatchesByFisherId(fisher.getId());
 
         if (soldCatches.isEmpty()) {
             ConsoleUI.info("You have no sales today.");
