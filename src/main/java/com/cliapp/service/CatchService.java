@@ -4,7 +4,6 @@ import com.cliapp.client.RESTClient;
 import com.cliapp.model.CatchViewDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,37 +32,27 @@ public class CatchService {
         }
     }
 
-    public List<CatchViewDTO> searchCatches(String species, String pickupAddress, BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<CatchViewDTO> searchCatches(String speciesName, String landingName) {
         try {
-            return client.searchCatches(species, pickupAddress, minPrice, maxPrice);
+            return client.searchCatches(speciesName, landingName);
         } catch (Exception e) {
             return handleCatchError(e);
         }
     }
-    public List<CatchViewDTO> searchBySpecies(String species) {
-        return searchCatches(species, null, null, null);
+    public List<CatchViewDTO> searchBySpeciesName(String species) {
+        return searchCatches(species, null);
+
     }
 
-    public List<CatchViewDTO> searchByLanding(String portName) {
-        return searchCatches(null, portName, null, null);
-    }
-
-    public List<CatchViewDTO> searchByPriceRange(BigDecimal min, BigDecimal max) {
-        return searchCatches(null, null, min, max);
+    public List<CatchViewDTO> searchByLandingName(String landingName) {
+        return searchCatches(null, landingName);
     }
 
 
-    public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
+    public List<CatchViewDTO> getCatchesByFisherName(String username) {
+        long fisherId = client.getUserByUsername(username).getId();
         try {
-            return client.getCatchesBySpecies(speciesName);
-        } catch (Exception e) {
-            return handleCatchError(e);
-        }
-    }
-
-    public List<CatchViewDTO> getCatchesByFisherName(String name) {
-        try {
-            return client.getCatchesByFisherName(name);
+            return client.getCatchesByFisherId(fisherId);
         } catch (Exception e) {
             return handleCatchError(e);
         }
@@ -87,18 +76,18 @@ public class CatchService {
 
     public List<CatchViewDTO> getCatchesByLandingName(String landingName) {
         try {
-            return client.searchCatches(null, landingName, null, null);
+            return client.searchCatches(null, landingName);
         } catch (Exception e) {
             return handleCatchError(e);
         }
     }
 
-    public Map<String, Long> getCatchCountByLanding(String landing) {
-        List<CatchViewDTO> catches = getCatchesByLandingName(landing); // this fetches from the RESTClient
+    public Map<String, Long> getCatchCountBySpecies(String speciesName) {
+        List<CatchViewDTO> catches = searchBySpeciesName(speciesName); // this fetches from the RESTClient
         return catches.stream()
-                .filter(c -> c.getPickupLocationName() != null)
+                .filter(c -> c.getSpeciesName() != null)
                 .collect(Collectors.groupingBy(
-                        CatchViewDTO::getPickupLocationName,
+                        CatchViewDTO::getSpeciesName,
                         Collectors.counting()
                 ));
     }

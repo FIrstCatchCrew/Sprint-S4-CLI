@@ -75,12 +75,35 @@ public class RESTClient {
      * @throws IOException if an I/O error occurs during the operation
      * @throws InterruptedException if the operation is interrupted
      */
-    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {    HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode()!=200) {
-            System.out.println("Error Status Code: " + response.statusCode());
-        }    return response;
-    }
+//    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {    HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
+//        if (response.statusCode()!=200) {
+//            System.out.println("Error Status Code: " + response.statusCode());
+//        }    return response;
+//    }
+//
 
+    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {
+        // Log the request
+        System.out.println("➡️  Sending Request:");
+        System.out.println("URL:    " + request.uri());
+        System.out.println("Method: " + request.method());
+
+        // Optional: log headers
+        request.headers().map().forEach((key, value) ->
+                System.out.println("Header: " + key + " = " + String.join(", ", value))
+        );
+
+        // Send and log response
+        HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+        System.out.println("⬅️  Response Status: " + response.statusCode());
+
+        if (response.statusCode() != 200) {
+            System.out.println("Error Body: " + response.body());
+        }
+
+        return response;
+    }
     /**
      * Sends an HTTP GET request to the specified endpoint, retrieves the response,
      * and deserializes the response body into a list of objects of the specified type.
@@ -142,9 +165,6 @@ public class RESTClient {
         return getList(CATCH_ENDPOINT, new TypeReference<>() {});
     }
 
-    public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
-        return getList(CATCH_ENDPOINT + "/speciesName", new TypeReference<>() {});
-    }
     public List<CatchViewDTO> getCatchesByFisherId(long id) {
         String url = String.format(FISHER_CATCHES, id);
         return getList(url, new TypeReference<>() {});
@@ -175,34 +195,30 @@ public class RESTClient {
 
     // === catches by search ===
     public List<CatchViewDTO> getAvailableCatches() {
-        return getList(CATCH_ENDPOINT + "/species", new TypeReference<>() {});
+        return getList(CATCH_ENDPOINT + "/available", new TypeReference<>() {});
     }
-
 
     public List<CatchViewDTO> getSpeciesAvailableAtLanding(String landingName) {
         String encodedName = URLEncoder.encode(landingName, StandardCharsets.UTF_8);
-        return getList(CATCH_ENDPOINT + "/species/" + encodedName, new TypeReference<List<CatchViewDTO>>() {});
+        return getList(CATCH_ENDPOINT + "/available/" + encodedName, new TypeReference<List<CatchViewDTO>>() {});
     }
 
-    //TODO: this method could be cleaned up
-    public List<CatchViewDTO> searchCatches(String species, String pickupAddress, BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<CatchViewDTO> getCatchesBySpecies(String speciesName) {
+        String encodedName = URLEncoder.encode(speciesName, StandardCharsets.UTF_8);
+        return getList(CATCH_ENDPOINT + "/speciesName/" + encodedName, new TypeReference<>() {});
+    }
+
+    public List<CatchViewDTO> searchCatches(String species, String landingName) {
         StringBuilder query = new StringBuilder(CATCH_ENDPOINT + "/search?");
 
         if (species != null) {
             String encodedSpeciesName = URLEncoder.encode(species, StandardCharsets.UTF_8);
-            query.append("species=").append(encodedSpeciesName).append("&");
+            query.append("speciesName=").append(encodedSpeciesName).append("&");
         }
-        if (pickupAddress != null) {
-            String encodedAddress = URLEncoder.encode(pickupAddress, StandardCharsets.UTF_8);
-            query.append("pickup_address=").append(encodedAddress).append("&");
+        if (landingName != null) {
+            String encodedLandingName = URLEncoder.encode(landingName, StandardCharsets.UTF_8);
+            query.append("pickupLocationName=").append(encodedLandingName).append("&");
         }
-        if (minPrice != null) {
-            query.append("min_price=").append(minPrice).append("&");
-        }
-        if (maxPrice != null) {
-            query.append("max_price=").append(maxPrice).append("&");
-        }
-
         if (query.charAt(query.length() - 1) == '&') {
             query.setLength(query.length() - 1);
         }
@@ -244,7 +260,7 @@ public class RESTClient {
     }
 
     public Person getUserByUsername(String username) {
-        return getObject(PERSON_ENDPOINT + "/" + username, Person.class);
+        return getObject(PERSON_ENDPOINT + "/username/" + username, Person.class);
     }
 
     public List<Person> getAllByRoleType(String role) {
