@@ -37,4 +37,9 @@ public class SharedMenuActions {
         List<CatchViewDTO> catchViewDTOS = catchService.getCatchesBySpecies(species);
         catchViewDTOS.forEach(System.out::println);
     }
+
+    private void printCatch(CatchViewDTO c) {
+        System.out.printf("Catch ID: %d | Species: %s | %.2f kg | $%.2f/kg | Fisher: %s\n",
+                c.getId(), c.getSpecies(), c.getQuantityInKg(), c.getPricePerKg(), c.getFisherName());
+    }
 }

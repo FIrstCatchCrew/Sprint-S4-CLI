@@ -75,15 +75,10 @@ public class RESTClient {
      * @throws IOException if an I/O error occurs during the operation
      * @throws InterruptedException if the operation is interrupted
      */
-    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {
-        HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode()==200) {
-            System.out.println("*****Response Body Print****");
-            System.out.println("***** " + response.body());
-        } else {
+    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {    HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode()!=200) {
             System.out.println("Error Status Code: " + response.statusCode());
-        }
-        return response;
+        }    return response;
     }
 
     /**
@@ -152,10 +147,16 @@ public class RESTClient {
     }
 
     // === catches by fisher ===
-    private List<CatchViewDTO> getCatchesByFisherSubpath(long id, String subPath) {
-        String url = String.format(FISHER_CATCHES, id) + subPath;
+    public List<CatchViewDTO> getCatchesByFisherId(long id) {
+        String url = String.format(FISHER_CATCHES, id);
         return getList(url, new TypeReference<>() {});
     } // return getCatchesByFisherSubpath(id, "/expired");
+
+    private List<CatchViewDTO> getCatchesByFisherSubpath(long id, String subPath) {
+        String url = String.format(FISHER_CATCHES, id) + subPath;
+        return getList(url, new TypeReference<>() {});}
+    // return getCatchesByFisherSubpath(id, "/expired");
+
 
 
     public List<CatchViewDTO> getFisherCatchesBySpecies(long id, String species) {
@@ -165,6 +166,15 @@ public class RESTClient {
     public List<CatchViewDTO> getFisherCatchesById(long id) {
         return getCatchesByFisherSubpath(id, "");
     }
+
+    public List<CatchViewDTO> getSoldCatchesByFisherId(long id) {
+        return getCatchesByFisherSubpath(id, "/sold");
+    }
+
+    public List<CatchViewDTO> getCatchesByFisher(String username) {
+        return getList(CATCH_ENDPOINT + "/fisher/" + username, new TypeReference<>() {});
+    }
+
 
 
 
@@ -180,12 +190,12 @@ public class RESTClient {
     }
 
     //TODO: this method could be cleaned up
-    public List<CatchViewDTO> searchCatches(String speciesName, String pickupAddress, BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<CatchViewDTO> searchCatches(String species, String pickupAddress, BigDecimal minPrice, BigDecimal maxPrice) {
         StringBuilder query = new StringBuilder(CATCH_ENDPOINT + "/search?");
 
-        if (speciesName != null) {
-            String encodedSpeciesName = URLEncoder.encode(speciesName, StandardCharsets.UTF_8);
-            query.append("species_name=").append(encodedSpeciesName).append("&");
+        if (species != null) {
+            String encodedSpeciesName = URLEncoder.encode(species, StandardCharsets.UTF_8);
+            query.append("species=").append(encodedSpeciesName).append("&");
         }
         if (pickupAddress != null) {
             String encodedAddress = URLEncoder.encode(pickupAddress, StandardCharsets.UTF_8);

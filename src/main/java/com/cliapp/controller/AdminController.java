@@ -1,6 +1,7 @@
 package com.cliapp.controller;
 
 import com.cliapp.client.RESTClient;
+import com.cliapp.model.CatchViewDTO;
 import com.cliapp.model.FisherProfile;
 import com.cliapp.model.Person;
 import com.cliapp.service.CatchService;
@@ -9,7 +10,9 @@ import com.cliapp.util.ConsoleUI;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class AdminController {
     private final Scanner scanner;
@@ -39,7 +42,7 @@ public class AdminController {
             switch (choice) {
                 case "1" -> viewAllFishers();
                 case "2" -> viewAllCustomers();
-                case "6" -> ConsoleUI.success("Q1 logic here...");
+                case "6" -> getCatchCountByLanding();
                 case "0" -> {
                     return;
                 }
@@ -67,6 +70,36 @@ public class AdminController {
         } catch (Exception e) {
             System.err.println("Failed to fetch or parse customers: " + e.getMessage());
             e.printStackTrace(); // Optional: for full trace
+        }
+    }
+
+
+    private void getCatchCountByLanding() {
+        try {
+            List<CatchViewDTO> allCatches = catchService.getAllCatches(); // Not filtered yet
+            if (allCatches.isEmpty()) {
+                ConsoleUI.info("No catches found.");
+                return;
+            }
+
+            // Group by pickup address and count
+            Map<String, Long> countByLanding = allCatches.stream()
+                    .filter(c -> c.getPickupLocationName() != null)
+                    .collect(Collectors.groupingBy(
+                            CatchViewDTO::getPickupLocationName,
+                            Collectors.counting()
+                    ));
+
+            ConsoleUI.header("Catch Counts by Landing (Port)");
+
+            // Optional: sort descending
+            countByLanding.entrySet().stream()
+                    .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                    .forEach(entry -> System.out.printf("Port: %-20s | Catches: %d\n", entry.getKey(), entry.getValue()));
+
+        } catch (Exception e) {
+            System.err.println("Failed to fetch or process catches: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

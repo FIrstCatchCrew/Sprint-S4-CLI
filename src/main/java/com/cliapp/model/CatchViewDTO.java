@@ -21,6 +21,8 @@ public class CatchViewDTO {
 
     private LocalDateTime timeStamp;
 
+    private Long landingId;
+
     private double latitude;
     private double longitude;
 
@@ -86,6 +88,10 @@ public class CatchViewDTO {
     public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
+
+    public Long getLandingId() {return landingId;}
+
+    public void setLandingId(Long landingId) {this.landingId = landingId;}
 
     public double getLatitude() {
         return latitude;

@@ -2,6 +2,7 @@ package com.cliapp.service;
 
 import com.cliapp.client.RESTClient;
 import com.cliapp.model.CatchViewDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;
 
@@ -10,6 +11,10 @@ public class CatchService {
 
     public CatchService(RESTClient client) {
         this.client = client;
+    }
+
+    public List<CatchViewDTO> getAllCatches() {
+        return client.getList("/catch", new TypeReference<>() {});
     }
 
     public List<CatchViewDTO> getAvailableCatches() {
@@ -25,6 +30,10 @@ public class CatchService {
         return client.getCatchesBySpecies(speciesName);
     }
 
+    public List<CatchViewDTO> getCatchesByFisher(String fisher) {
+        return client.getCatchesByFisher(fisher);
+    }
+
 //    public List<Catch> getCatchesByFisherName(String username) {
 //        return client.getCatchesByFisherName(username);
 //    }
@@ -33,8 +42,16 @@ public class CatchService {
         return client.getFisherCatchesById(id);
     }
 
+    public List<CatchViewDTO> getSoldCatchesByFisherId(long id) {
+        return client.getSoldCatchesByFisherId(id);
+    }
+
     public List<CatchViewDTO> getSpeciesAvailableAtLanding(String landingName) {
         return client.getSpeciesAvailableAtLanding(landingName);
+    }
+
+    public List<CatchViewDTO> getCatchesByLandingName(String landingName) {
+        return client.searchCatches(null, landingName, null, null);
     }
 }
 

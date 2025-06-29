@@ -4,8 +4,10 @@ import com.cliapp.client.RESTClient;
 import com.cliapp.controller.AdminController;
 import com.cliapp.controller.CustomerController;
 import com.cliapp.controller.FisherController;
+import com.cliapp.model.Order;
 import com.cliapp.model.Person;
 import com.cliapp.service.CatchService;
+import com.cliapp.service.OrderService;
 import com.cliapp.service.PersonService;
 import com.cliapp.util.ConsoleUI;
 
@@ -22,12 +24,13 @@ public class Main {
         // Init services
         CatchService catchService = new CatchService(restClient);
         PersonService personService = new PersonService(restClient);
+        OrderService orderService = new OrderService(restClient);
 
-        new Main().start(catchService, personService);
+        new Main().start(catchService, personService, orderService);
 
     }
 
-    public void start(CatchService catchService, PersonService personService) {
+    public void start(CatchService catchService, PersonService personService, OrderService orderService) {
         ConsoleUI.header("=== FIRST CATCH CLI ===");
 
         int choice;
@@ -61,9 +64,9 @@ public class Main {
         }
 
         switch (user.getRole()) {
-            case "ADMIN" -> new AdminController(scanner, catchService, personService).run(user);
-            case "FISHER" -> new FisherController(scanner, catchService, personService).run(user);
-            case "CUSTOMER" -> new CustomerController(scanner, catchService, personService).run(user);
+            case "ADMIN" -> new AdminController(scanner, catchService, personService,orderService).run(user);
+            case "FISHER" -> new FisherController(scanner, catchService, personService, orderService).run(user);
+            case "CUSTOMER" -> new CustomerController(scanner, catchService, personService, orderService).run(user);
             default -> ConsoleUI.error("Unknown role.");
         }
     }
