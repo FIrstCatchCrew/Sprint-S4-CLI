@@ -26,7 +26,7 @@ public class GuestController {
 
             switch (choice) {
                 case "1" -> viewAvailableCatches();
-                case "2" -> searchCatchesBySpecies();
+                //case "2" -> searchCatchesBySpeciesName();
                 case "0" -> {
                     return;
                 }
@@ -41,11 +41,11 @@ public class GuestController {
         });
     }
 
-    private void searchCatchesBySpecies() {
-        System.out.print("Enter species name: ");
-        String species = scanner.nextLine();
-        catchService.getCatchesBySpecies(species).forEach(fishCatch -> {
-            System.out.println("- " + fishCatch);
-        });
-    }
+//    private void searchCatchesBySpecies() {
+//        System.out.print("Enter species name: ");
+//        String species = scanner.nextLine();
+//        catchService.searchBySpeciesName(species).forEach(fishCatch -> {
+//            System.out.println("- " + fishCatch);
+//        });
+//    }
 }

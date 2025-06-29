@@ -2,18 +2,19 @@ package com.cliapp.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class CatchViewDTO {
     private long id;
 
-    @JsonProperty("speciesName")
-    private String species;
+    @JsonProperty("species_name")
+    private String speciesName;
 
-    private double quantityInKg;
+    private BigDecimal quantityInKg;
 
     @JsonProperty("price")
-    private double pricePerKg;
+    private BigDecimal pricePerKg;
 
     private boolean available;
 
@@ -26,7 +27,8 @@ public class CatchViewDTO {
     private double latitude;
     private double longitude;
 
-    private String pickupLocationName;
+    @JsonProperty("landing_name")
+    private String landingName;
 
     @JsonProperty("pickup_instructions")
     private String pickupInstructions;
@@ -41,27 +43,27 @@ public class CatchViewDTO {
         this.id = id;
     }
 
-    public String getSpecies() {
-        return species;
+    public String getSpeciesName() {
+        return speciesName;
     }
 
-    public void setSpecies(String species) {
-        this.species = species;
+    public void setSpeciesName(String speciesName) {
+        this.speciesName = speciesName;
     }
 
-    public double getQuantityInKg() {
+    public BigDecimal getQuantityInKg() {
         return quantityInKg;
     }
 
-    public void setQuantityInKg(double quantityInKg) {
+    public void setQuantityInKg(BigDecimal quantityInKg) {
         this.quantityInKg = quantityInKg;
     }
 
-    public double getPricePerKg() {
+    public BigDecimal getPricePerKg() {
         return pricePerKg;
     }
 
-    public void setPricePerKg(double pricePerKg) {
+    public void setPricePerKg(BigDecimal pricePerKg) {
         this.pricePerKg = pricePerKg;
     }
 
@@ -109,12 +111,12 @@ public class CatchViewDTO {
         this.longitude = longitude;
     }
 
-    public String getPickupLocationName() {
-        return pickupLocationName;
+    public String getLandingName() {
+        return landingName;
     }
 
-    public void setPickupLocationName(String pickupLocationName) {
-        this.pickupLocationName = pickupLocationName;
+    public void setLandingName(String landingName) {
+        this.landingName = landingName;
     }
 
     public String getPickupInstructions() {

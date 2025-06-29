@@ -29,8 +29,6 @@ public class FisherController {
     public void run(Person fisher) {
         while (true) {
             ConsoleUI.header("Fisher Menu for " + fisher.getUsername());
-            System.out.print(fisher.getId()+ fisher.getUsername()+ fisher.getEmail()+ fisher.getRole());
-
 
             ConsoleUI.option("1", "Add New Catch", false);
             ConsoleUI.option("2", "View My Catches", true);
@@ -64,7 +62,7 @@ public class FisherController {
         for (CatchViewDTO c : catchViewDTOS) {
             System.out.printf("ID: %d | Species: %s | Qty: %.2fkg | Price: $%.2f | Available: %s\n",
                     c.getId(),
-                    c.getSpecies(),
+                    c.getSpeciesName(),
                     c.getQuantityInKg(),
                     c.getPricePerKg(),
                     c.isAvailable() ? "Yes" : "No"
@@ -73,44 +71,37 @@ public class FisherController {
     }
 
     private void displaySalesToday(Person fisher) {
-        List<CatchViewDTO> soldCatches = fisherService.getSoldCatchesByFisherId(fisher.getId());
+            List<CatchViewDTO> soldCatches = fisherService.getTodaysSalesByFisherId(fisher.getId());
 
-        if (soldCatches.isEmpty()) {
-            ConsoleUI.info("You have no sales today.");
-            return;
-        }
+            if (soldCatches.isEmpty()) {
+                ConsoleUI.info("You have no sales today.");
+                return;
+            }
 
-        LocalDate today = LocalDate.now();
-        BigDecimal total = BigDecimal.ZERO;
-        int count = 0;
+            LocalDate today = LocalDate.now();
+            BigDecimal total = BigDecimal.ZERO;
 
-        System.out.println("\n=== Sales for Today (" + today + ") ===");
+            System.out.println("\n=== Sales for Today (" + today + ") ===");
 
-        for (CatchViewDTO c : soldCatches) {
-            if (c.getTimeStamp().toLocalDate().isEqual(today)) {
-                count++;
-
-                BigDecimal price = BigDecimal.valueOf(c.getPricePerKg());
-                BigDecimal quantity = BigDecimal.valueOf(c.getQuantityInKg());
-                BigDecimal lineTotal = price.multiply(quantity);
+            for (CatchViewDTO c : soldCatches) {
+                BigDecimal lineTotal = c.getPricePerKg().multiply(c.getQuantityInKg());
 
                 total = total.add(lineTotal);
 
                 System.out.printf("Sold: %s | %.2f kg | $%.2f/kg | Line: $%.2f\n",
-                        c.getSpecies(),
+                        c.getSpeciesName(),
                         c.getQuantityInKg(),
                         c.getPricePerKg(),
                         lineTotal
                 );
             }
-        }
 
-        if (count == 0) {
-            ConsoleUI.info("You have no sales for today.");
-        } else {
-            BigDecimal avg = total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+            int count = soldCatches.size();
+            BigDecimal avg = (count > 0)
+                    ? total.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP)
+                    : BigDecimal.ZERO;
+
             System.out.printf("\nSummary: %d sales | Total: $%.2f | Avg per sale: $%.2f\n", count, total, avg);
         }
-    }
 
 }
