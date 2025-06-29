@@ -34,12 +34,12 @@ public class SharedMenuActions {
     public void viewCatchesBySpecies(Scanner scanner) {
         System.out.print("Enter species name: ");
         String species = scanner.nextLine();
-        List<CatchViewDTO> catchViewDTOS = catchService.getCatchesBySpecies(species);
+        List<CatchViewDTO> catchViewDTOS = catchService.searchBySpeciesName(species);
         catchViewDTOS.forEach(System.out::println);
     }
 
     private void printCatch(CatchViewDTO c) {
         System.out.printf("Catch ID: %d | Species: %s | %.2f kg | $%.2f/kg | Fisher: %s\n",
-                c.getId(), c.getSpecies(), c.getQuantityInKg(), c.getPricePerKg(), c.getFisherName());
+                c.getId(), c.getSpeciesName(), c.getQuantityInKg(), c.getPricePerKg(), c.getFisherName());
     }
 }

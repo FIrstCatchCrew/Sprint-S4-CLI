@@ -46,7 +46,7 @@ public class AdminController {
             ConsoleUI.option("3", "View All Catches", false);
             ConsoleUI.option("4", "Delete Catch", false);
             ConsoleUI.option("5", "Remove User", false);
-            ConsoleUI.option("6", "Q1: Count Catches by Port", true);
+            ConsoleUI.option("6", "Q1: Count Catches by Species", true);
             ConsoleUI.option("0", "Logout", true);
 
             System.out.print("Choose: ");
@@ -55,7 +55,7 @@ public class AdminController {
             switch (choice) {
                 case "1" -> viewAllFishers();
                 case "2" -> viewAllCustomers();
-                case "6" -> getCatchCountByLanding(scanner);
+                case "6" -> getCatchCountBySpecies(scanner);
                 case "0" -> {
                     return;
                 }
@@ -87,18 +87,18 @@ public class AdminController {
     }
 
 
-    private void getCatchCountByLanding(Scanner scanner) {
+    private void getCatchCountBySpecies(Scanner scanner) {
 
-        System.out.print("Enter port name: ");
-        String landing = scanner.nextLine();
-        if (landing.isBlank()) {
-            ConsoleUI.error("Port name cannot be blank.");
+        System.out.print("Enter species name: ");
+        String name = scanner.nextLine();
+        if (name.isBlank()) {
+            ConsoleUI.error("Species name cannot be blank.");
             return;
         }
-        Map<String, Long> countByLanding = catchService.getCatchCountByLanding(landing);
+        Map<String, Long> countBySpecies = catchService.getCatchCountBySpecies(name);
 
-        ConsoleUI.header("Catch Counts by Landing (Port)");
-        countByLanding.entrySet().stream()
+        ConsoleUI.header("Catch Counts by Species");
+        countBySpecies.entrySet().stream()
                 .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
                 .forEach(entry ->
                         System.out.printf("Port: %-20s | Catches: %d\n", entry.getKey(), entry.getValue())
