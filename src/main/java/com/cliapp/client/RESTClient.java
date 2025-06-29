@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -75,35 +74,12 @@ public class RESTClient {
      * @throws IOException if an I/O error occurs during the operation
      * @throws InterruptedException if the operation is interrupted
      */
-//    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {    HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
-//        if (response.statusCode()!=200) {
-//            System.out.println("Error Status Code: " + response.statusCode());
-//        }    return response;
-//    }
-//
-
-    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {
-        // Log the request
-        System.out.println("➡️  Sending Request:");
-        System.out.println("URL:    " + request.uri());
-        System.out.println("Method: " + request.method());
-
-        // Optional: log headers
-        request.headers().map().forEach((key, value) ->
-                System.out.println("Header: " + key + " = " + String.join(", ", value))
-        );
-
-        // Send and log response
-        HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-        System.out.println("⬅️  Response Status: " + response.statusCode());
-
-        if (response.statusCode() != 200) {
-            System.out.println("Error Body: " + response.body());
-        }
-
-        return response;
+    private HttpResponse<String> httpSender(HttpRequest request) throws IOException, InterruptedException {    HttpResponse<String> response = getClient().send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode()!=200) {
+            System.out.println("Error Status Code: " + response.statusCode());
+        }    return response;
     }
+
     /**
      * Sends an HTTP GET request to the specified endpoint, retrieves the response,
      * and deserializes the response body into a list of objects of the specified type.
@@ -152,7 +128,6 @@ public class RESTClient {
             return null;
         }
     }
-
 
 
     // === Public catch-related methods ===
@@ -217,7 +192,7 @@ public class RESTClient {
         }
         if (landingName != null) {
             String encodedLandingName = URLEncoder.encode(landingName, StandardCharsets.UTF_8);
-            query.append("pickupLocationName=").append(encodedLandingName).append("&");
+            query.append("landingName=").append(encodedLandingName).append("&");
         }
         if (query.charAt(query.length() - 1) == '&') {
             query.setLength(query.length() - 1);

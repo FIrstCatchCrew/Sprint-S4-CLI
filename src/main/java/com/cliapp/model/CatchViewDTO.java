@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 public class CatchViewDTO {
     private long id;
 
-    @JsonProperty("species_name")
     private String speciesName;
 
     private BigDecimal quantityInKg;
@@ -26,8 +25,7 @@ public class CatchViewDTO {
 
     private double latitude;
     private double longitude;
-
-    @JsonProperty("landing_name")
+    
     private String landingName;
 
     @JsonProperty("pickup_instructions")
