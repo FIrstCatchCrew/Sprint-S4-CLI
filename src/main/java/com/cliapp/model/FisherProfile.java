@@ -6,6 +6,12 @@ public class FisherProfile {
     private String userName;
     private String defaultLanding;
 
+    public FisherProfile(String userName, String fishingLicenseNumber, Long id) {
+        this.userName = userName;
+        this.fishingLicenseNumber = fishingLicenseNumber;
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
