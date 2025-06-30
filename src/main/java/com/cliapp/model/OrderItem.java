@@ -8,6 +8,13 @@ public class OrderItem {
     private BigDecimal quantity;
     private BigDecimal price;
 
+    public OrderItem(Long id, String speciesName, BigDecimal quantity, BigDecimal price) {
+        this.id = id;
+        this.speciesName = speciesName;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
     public Long getId() { return id;}
 
     public String getSpeciesName() { return speciesName; }
