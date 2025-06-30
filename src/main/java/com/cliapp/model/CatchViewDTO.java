@@ -7,31 +7,32 @@ import java.time.LocalDateTime;
 
 public class CatchViewDTO {
     private long id;
-
     private String speciesName;
-
     private BigDecimal quantityInKg;
 
     @JsonProperty("price")
     private BigDecimal pricePerKg;
-
     private boolean available;
-
     private String fisherName;
-
     private LocalDateTime timeStamp;
-
     private Long landingId;
-
     private double latitude;
     private double longitude;
-    
     private String landingName;
-
     @JsonProperty("pickup_instructions")
     private String pickupInstructions;
-
     private LocalDateTime pickupTime;
+
+    public CatchViewDTO(long id, String speciesName, BigDecimal quantityInKg, BigDecimal pricePerKg, boolean available, String fisherName, String landingName) {
+        this.id = id;
+        this.speciesName = speciesName;
+        this.quantityInKg = quantityInKg;
+        this.pricePerKg = pricePerKg;
+        this.available = available;
+        this.fisherName = fisherName;
+        this.landingName = landingName;
+    }
+
 
     public long getId() {
         return id;
