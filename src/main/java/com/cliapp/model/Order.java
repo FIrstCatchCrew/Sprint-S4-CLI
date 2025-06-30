@@ -12,6 +12,9 @@ public class Order {
     private String orderStatus;
     private List<OrderItem> orderItems;
 
+    public Order() {
+    }
+
     public Order(List<OrderItem> orderItems, String orderStatus, LocalDateTime orderDateTime, String customerUsername, long id) {
         this.orderItems = orderItems;
         this.orderStatus = orderStatus;
