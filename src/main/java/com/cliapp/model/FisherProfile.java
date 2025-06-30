@@ -6,6 +6,9 @@ public class FisherProfile {
     private String userName;
     private String defaultLanding;
 
+    public FisherProfile() {
+    }
+
     public FisherProfile(String userName, String fishingLicenseNumber, Long id) {
         this.userName = userName;
         this.fishingLicenseNumber = fishingLicenseNumber;

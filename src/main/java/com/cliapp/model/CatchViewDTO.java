@@ -23,6 +23,9 @@ public class CatchViewDTO {
     private String pickupInstructions;
     private LocalDateTime pickupTime;
 
+    public CatchViewDTO() {
+    }
+
     public CatchViewDTO(long id, String speciesName, BigDecimal quantityInKg, BigDecimal pricePerKg, boolean available, String fisherName, String landingName) {
         this.id = id;
         this.speciesName = speciesName;
