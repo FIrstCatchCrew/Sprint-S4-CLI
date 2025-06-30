@@ -1,3 +1,9 @@
+/**
+ * Description: CLI controller for Admin users.
+ *              Includes options to view users, catch records, and perform admin tasks like deletes or analytics.
+ */
+
+
 package com.cliapp.controller;
 
 import com.cliapp.client.RESTClient;

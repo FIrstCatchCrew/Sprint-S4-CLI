@@ -1,3 +1,9 @@
+/**
+ * Description: CLI controller for Fisher users.
+ *              Allows fishers to manage their catches and view sales data.
+ */
+
+
 package com.cliapp.controller;
 
 import com.cliapp.model.CatchViewDTO;

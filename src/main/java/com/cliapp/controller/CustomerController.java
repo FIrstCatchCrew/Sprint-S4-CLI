@@ -1,3 +1,9 @@
+/**
+ * Description: CLI controller for Customer users.
+ *              Displays menu for viewing available catches, searching by filters, and making orders.
+ */
+
+
 package com.cliapp.controller;
 
 import com.cliapp.model.CatchViewDTO;

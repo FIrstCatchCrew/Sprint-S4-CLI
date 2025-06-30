@@ -1,38 +1,9 @@
 package com.cliapp.util;
-
 /**
- * ConsoleUI is a simple utility class designed to standardize and enhance
- * command-line interface (CLI) output for text-based Java applications.
- *
- * <p>
- * It provides methods to print styled messages such as headers, success messages,
- * errors, and general information using ANSI escape codes for color and formatting.
- * </p>
- *
- * <h2>Why Use This?</h2>
- * <ul>
- *     <li>Improves readability and consistency of CLI output</li>
- *     <li>Makes it easier to distinguish between sections (e.g., errors vs. headers)</li>
- *     <li>Centralizes formatting logic, making global style updates easy</li>
- * </ul>
- *
- * <h2>How to Use</h2>
- * Simply call the desired static method:
- * <pre>
- *     ConsoleUI.header("Login Menu");
- *     ConsoleUI.success("Login successful");
- *     ConsoleUI.error("Invalid password");
- *     ConsoleUI.info("Loading...");
- * </pre>
- *
- * <p>
- * Works on most Unix-based terminals (Mac, Linux, modern Windows terminals).
- * For portability, consider adding a `useColor` flag or terminal capability detection.
- * </p>
- *
- * @author YourName
- * @version 1.0
+ * Description: CLI utility class for printing styled text to the terminal.
+ *              Helps create a clean UI for headers, prompts, errors, and options.
  */
+
 public class ConsoleUI {
 
     // ANSI escape codes for color formatting
