@@ -1,3 +1,10 @@
+/**
+ * Description: Launches the First Catch CLI tool.
+ *              Handles login and routes to the correct role-based menu (admin, fisher, customer).
+ *              Connects to the backend API using service classes and a REST client.
+ */
+
+
 package com.cliapp;
 
 import com.cliapp.client.RESTClient;
@@ -27,6 +34,13 @@ public class Main {
 
         new Main().start(catchService, personService, orderService, fisherService, authService);
 
+    }
+
+    // For testing only
+    public void start() {
+        ConsoleUI.header("=== FIRST CATCH CLI ===");
+        System.out.println("1. Login");
+        System.out.println("2. Exit");
     }
 
     public void start(CatchService catchService, PersonService personService, OrderService orderService, FisherService fisherService, AuthService authService) {
