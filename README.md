@@ -14,9 +14,15 @@ A Java console-based client application that communicates with the firstcatch-ap
 1. Build the project: ```mvn clean install```
 1. Run the application: ```java -jar target/firstcatch-cli.jar```
 1. Follow on-screen prompts to interact with the backend
-
 ***Note:*** make sure backend server is running and accessible at the configured URL in the CLI's RESTClient.java.
 
+### Sample Run
+Sample data is included in the database seeder SQL in the backend repo. If you use this data, here's the login info you can use to run the menu:
+username, password
+1. Admin: admin, adminpass
+1. Fisher: fisher3, fisherpass3
+1. Customer: customer3, custpass3
+     
 
 ## Project Requirements
 
